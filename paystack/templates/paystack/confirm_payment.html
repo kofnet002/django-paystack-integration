@@ -1,0 +1,77 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+Confirm Payment
+{% endblock title %}
+
+
+{% block content %}
+<h1 style="font-weight: 900;" class="text-white font-weight-700 text-center my-5">
+    Confirm payment
+</h1>
+<hr />
+<div class="container">
+    <div style="font-weight: bold;" class="d-flex row justify-content-center align-items-center py-md-5 py-3">
+        <div class="col-12">
+
+            <!-- aid verify payment -->
+            <div id="verify-payment-url" data-url="{% url 'verify-payment' payment.ref %}"></div>
+
+            {{ payment.ref | json_script:'reference'}}
+            {{ payment.email | json_script:'email'}}
+            {{ payment.amount | json_script:'amount'}}
+            {{ paystack_pulic_key | json_script:'key'}}
+
+            <h5>Make payment for: GHS {{ payment.amount }}</h5>
+            <hr />
+            <div class="d-grid">
+                <button onclick="payWithPayStack()" class="btn btn-large btn-success" id="paystack-btn">
+                    Confirm payment
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% block script %}
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<script src="{% static 'js/paystack.js' %}" defer></script>
+
+<!-- Moved code to a separate file, paystack.js -->
+<!-- <script>
+    const payWithPayStack = () => {
+        const currency = 'GHS';
+        const plan = "";
+        const reference = "{{ payment.ref }}";
+        const obj = {
+            key: "{{ paystack_pulic_key }}",
+            email: "{{ payment.email }}",
+            amount: "{{ payment.amount }}" * 100,
+            ref: ref,
+
+            callback: () => {
+                window.location.href = "{% url 'verify-payment' payment.ref %}"
+            }
+        }
+
+        if (Boolean(currency)) obj.currency = currency.toLowerCase()
+        if (Boolean(plan)) obj.plan = plan
+
+        const handler = PaystackPop.setup(obj);
+        handler.openIframe();
+    }
+</script> -->
+
+{% endblock script %}
+
+{% endblock content %}
